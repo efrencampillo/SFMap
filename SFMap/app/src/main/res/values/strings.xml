@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SFMap</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="network_error_message">there was an error retrieving the locations</string>
+    <string name="title_activity_reports">ReportsActivity</string>
+    <string name="view_map">View Map</string>
+    <string name="reports">Reports:%d</string>
+</resources>
