@@ -18,13 +18,14 @@ public class ReportsActivity extends AppCompatActivity implements
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayoutManager;
     ReportsAdapter mReportsAdapter;
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefreshlayout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -86,6 +87,7 @@ public class ReportsActivity extends AppCompatActivity implements
             public void run() {
                 mSwipeRefreshLayout.setRefreshing(false);
                 mReportsAdapter.notifyDataSetChanged();
+                updateTitle();
             }
         });
     }
@@ -113,6 +115,10 @@ public class ReportsActivity extends AppCompatActivity implements
                 ReportsRetriever.getInstance().retrieveMoreReports();
             }
         });
+    }
+
+    private void updateTitle() {
+        mToolbar.setTitle(getString(R.string.reports, ReportsRetriever.getInstance().getTotalReportLoaded()));
     }
 
 }

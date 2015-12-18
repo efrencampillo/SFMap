@@ -10,11 +10,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.ui.IconGenerator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +26,7 @@ public class MapActivity extends AppCompatActivity implements
     private GoogleMap mMap;
     private boolean showingCrimePin = false;
     Marker currentCrimeMarker;
+    Toolbar mToolbar;
 
     public static final String MAP_FLAG = "showingCrimePin";
     public static final String CRIME_LAT = "lat";
@@ -38,8 +39,8 @@ public class MapActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         showingCrimePin = getIntent().getBooleanExtra(MAP_FLAG, false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -57,18 +58,13 @@ public class MapActivity extends AppCompatActivity implements
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sf, 12));
 
         mMap.clear();
-
+        IconGenerator factory = new IconGenerator(this);
         ArrayList<District> districts = ReportsRetriever.getInstance().getDistricts();
         Collections.sort(districts, new District.ReportComparator());
         for (int i = 0; i < districts.size(); i++) {
             District district = districts.get(i);
-            BitmapDescriptor descriptor = getMarkerIconColorFromStringColor(District.colors.get(i));
-            mMap.addMarker(new MarkerOptions()
-                            .title(district.mName)
-                            .position(new LatLng(district.lat, district.lon))
-                            .snippet(getString(R.string.reports, district.reports))
-                            .icon(descriptor)
-            );
+            factory.setColor(Color.parseColor(District.colors.get(i)));
+            addIcon(factory, district.mName + "\n" + district.reports, new LatLng(district.lat, district.lon));
         }
 
         if (showingCrimePin) {
@@ -85,6 +81,7 @@ public class MapActivity extends AppCompatActivity implements
                 e.printStackTrace();
             }
         }
+        updateTitle();
     }
 
     @Override
@@ -97,12 +94,17 @@ public class MapActivity extends AppCompatActivity implements
         return true;
     }
 
+    private void addIcon(IconGenerator iconFactory, String text, LatLng position) {
+        MarkerOptions markerOptions = new MarkerOptions().
+                icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(text))).
+                position(position).
+                anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
 
-    // method definition
-    public BitmapDescriptor getMarkerIconColorFromStringColor(String color) {
-        float[] hsv = new float[3];
-        Color.colorToHSV(Color.parseColor(color), hsv);
-        return BitmapDescriptorFactory.defaultMarker(hsv[0]);
+        mMap.addMarker(markerOptions);
+    }
+
+    private void updateTitle() {
+        mToolbar.setTitle(getString(R.string.reports, ReportsRetriever.getInstance().getTotalReportLoaded()));
     }
 
 }
