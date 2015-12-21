@@ -12,7 +12,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
 
@@ -25,14 +24,10 @@ public class MapActivity extends AppCompatActivity implements
 
     private GoogleMap mMap;
     private boolean showingCrimePin = false;
-    Marker currentCrimeMarker;
-    Toolbar mToolbar;
+    private Toolbar mToolbar;
 
     public static final String MAP_FLAG = "showingCrimePin";
-    public static final String CRIME_LAT = "lat";
-    public static final String CRIME_LON = "lon";
-    public static final String CRIME_TITLE = "title";
-    public static final String CRIME_SNIPPET = "snippet";
+    public static final String CRIME_POSITION = "mID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,17 +59,18 @@ public class MapActivity extends AppCompatActivity implements
         for (int i = 0; i < districts.size(); i++) {
             District district = districts.get(i);
             factory.setColor(Color.parseColor(District.colors.get(i)));
-            addIcon(factory, district.mName + "\n" + district.reports, new LatLng(district.lat, district.lon));
+            addIcon(factory, district.mName + "\n" + district.reports, new LatLng(district.mLat, district.mLon));
         }
 
         if (showingCrimePin) {
             try {
-                double lat = Double.parseDouble(getIntent().getStringExtra(CRIME_LAT));
-                double lon = Double.parseDouble(getIntent().getStringExtra(CRIME_LON));
-                currentCrimeMarker = mMap.addMarker(new MarkerOptions()
-                                .title(getIntent().getStringExtra(CRIME_TITLE))
+                Report report = ReportsRetriever.getInstance().get(getIntent().getIntExtra(CRIME_POSITION, 0));
+                double lat = Double.parseDouble(report.mLat);
+                double lon = Double.parseDouble(report.mLon);
+                mMap.addMarker(new MarkerOptions()
+                                .title(report.mCategory)
                                 .position(new LatLng(lat, lon))
-                                .snippet(getIntent().getStringExtra(CRIME_SNIPPET))
+                                .snippet( report.mDescription + "\n" + report.mAddress)
                                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_crime))
                 );
             } catch (Exception e) {
@@ -104,7 +100,7 @@ public class MapActivity extends AppCompatActivity implements
     }
 
     private void updateTitle() {
-        mToolbar.setTitle(getString(R.string.reports, ReportsRetriever.getInstance().getTotalReportLoaded()));
+        mToolbar.setTitle(getString(R.string.reports, ReportsRetriever.getInstance().getTotalReportsLoaded()));
     }
 
 }

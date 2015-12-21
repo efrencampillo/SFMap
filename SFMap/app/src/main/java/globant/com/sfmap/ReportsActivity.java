@@ -12,7 +12,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 public class ReportsActivity extends AppCompatActivity implements
-        ReportsRetriever.ReportsRetrieverListener {
+        ReportsRetriever.ReportsRetrieverListener,
+        ReportsAdapter.AdapterClickListener {
 
     SwipeRefreshLayout mSwipeRefreshLayout;
     RecyclerView mRecyclerView;
@@ -68,16 +69,18 @@ public class ReportsActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         ReportsRetriever.getInstance().registerListener(this);
-        if (ReportsRetriever.getInstance().getTotalReportLoaded() < 1) {
+        if (ReportsRetriever.getInstance().getTotalReportsLoaded() < 1) {
             ReportsRetriever.getInstance().retrieveMoreReports();
             mSwipeRefreshLayout.setRefreshing(true);
         }
+        mReportsAdapter.registerReportClickListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         ReportsRetriever.getInstance().unregisterListener();
+        mReportsAdapter.unregisterReportClickListener();
     }
 
     @Override
@@ -118,7 +121,14 @@ public class ReportsActivity extends AppCompatActivity implements
     }
 
     private void updateTitle() {
-        mToolbar.setTitle(getString(R.string.reports, ReportsRetriever.getInstance().getTotalReportLoaded()));
+        mToolbar.setTitle(getString(R.string.reports, ReportsRetriever.getInstance().getTotalReportsLoaded()));
     }
 
+    @Override
+    public void onClick(int position) {
+        Intent intent = new Intent(this, MapActivity.class);
+        intent.putExtra(MapActivity.CRIME_POSITION,position);
+        intent.putExtra(MapActivity.MAP_FLAG, true);
+        startActivity(intent);
+    }
 }

@@ -10,22 +10,22 @@ import java.util.Comparator;
  */
 public class District {
 
-    float lat;
-    float lon;
+    float mLat;
+    float mLon;
     String mName;
     int reports = 0;
 
     public District(String name, JSONObject obj) {
         mName = name;
         try {
-            lat = Float.parseFloat(obj.getString("latitude"));
-            lon = Float.parseFloat(obj.getString("longitude"));
+            mLat = Float.parseFloat(obj.getString("latitude"));
+            mLon = Float.parseFloat(obj.getString("longitude"));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void incrementCounter() {
+    public void incrementReportCounter() {
         reports++;
     }
 

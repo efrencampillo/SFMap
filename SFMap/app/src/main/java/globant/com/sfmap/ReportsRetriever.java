@@ -21,14 +21,15 @@ public class ReportsRetriever {
     private static ReportsRetriever sInstance;
     private ReportsRetrieverListener mListener;
     private ArrayList<Report> mReports;
-    private ArrayList<District> mDistrict;
-    OkHttpClient mClient;
+    private ArrayList<District> mDistricts;
+    private OkHttpClient mClient;
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private int REQUEST_LIMIT = 50;
 
     private ReportsRetriever() {
         mReports = new ArrayList<>();
-        mDistrict = new ArrayList<>();
+        mDistricts = new ArrayList<>();
         mClient = new OkHttpClient();
     }
 
@@ -63,7 +64,6 @@ public class ReportsRetriever {
             @Override
             public void run() {
                 try {
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     Calendar cal = Calendar.getInstance();
                     cal.add(Calendar.MONTH, -1);
                     Date date = cal.getTime();
@@ -88,13 +88,13 @@ public class ReportsRetriever {
                             district = getDistrict(districtName);
                         } else {
                             district = new District(districtName, obj.getJSONObject("location"));
-                            mDistrict.add(district);
+                            mDistricts.add(district);
                         }
                         Report report = new Report(obj, district);
                         mReports.add(report);
                     }
                     if (mListener != null) {
-                        mListener.onLocationsAvailable();//TODO send paserd info
+                        mListener.onLocationsAvailable();
                     }
                 } catch (Exception e) {
                     if (mListener != null) {
@@ -106,14 +106,14 @@ public class ReportsRetriever {
     }
 
     private boolean existDistrict(String name) {
-        for (District district : mDistrict) {
+        for (District district : mDistricts) {
             if (district.mName.equals(name)) return true;
         }
         return false;
     }
 
     private District getDistrict(String name) {
-        for (District district : mDistrict) {
+        for (District district : mDistricts) {
             if (district.mName.equals(name)) return district;
         }
         return null;
@@ -126,16 +126,17 @@ public class ReportsRetriever {
         return mReports.get(index);
     }
 
-    public int getTotalReportLoaded() {
+    public int getTotalReportsLoaded() {
         return mReports.size();
     }
 
     public ArrayList<District> getDistricts() {
-        return mDistrict;
+        return mDistricts;
     }
 
     public void clear() {
         mReports.clear();
-        mDistrict.clear();
+        mDistricts.clear();
     }
+
 }

@@ -10,32 +10,32 @@ public class Report {
 
     District mDistrict;
 
-    String category;
-    String time;
-    String date;
-    String dayOfWeek;
-    String address;
-    String description;
-    String resolution;
-    String id;
-    String latitud;
-    String longitud;
+    String mCategory;
+    String mTime;
+    String mDate;
+    String mDayOfWeek;
+    String mAddress;
+    String mDescription;
+    String mResolution;
+    String mId;
+    String mLat;
+    String mLon;
 
 
     public Report(JSONObject info, District district) {
         try {
-            category = info.getString("category");
-            time = info.getString("time");
-            date = info.getString("date");
-            address = info.getString("address");
-            description = info.getString("descript");
-            dayOfWeek = info.getString("dayofweek");
-            resolution = info.getString("resolution");
-            id = info.getString("incidntnum");
-            latitud = info.getString("y");
-            longitud = info.getString("x");
+            mCategory = info.getString("category");
+            mTime = info.getString("time");
+            mDate = info.getString("date");
+            mAddress = info.getString("address");
+            mDescription = info.getString("descript");
+            mDayOfWeek = info.getString("dayofweek");
+            mResolution = info.getString("resolution");
+            mId = info.getString("incidntnum");
+            mLat = info.getString("y");
+            mLon = info.getString("x");
             mDistrict = district;
-            mDistrict.incrementCounter();
+            mDistrict.incrementReportCounter();
         } catch (Exception e) {
             e.printStackTrace();
         }
