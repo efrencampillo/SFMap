@@ -15,11 +15,11 @@ public class ReportsActivity extends AppCompatActivity implements
         ReportsRetriever.ReportsRetrieverListener,
         ReportsAdapter.AdapterClickListener {
 
-    SwipeRefreshLayout mSwipeRefreshLayout;
-    RecyclerView mRecyclerView;
-    LinearLayoutManager mLayoutManager;
-    ReportsAdapter mReportsAdapter;
-    Toolbar mToolbar;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+    private ReportsAdapter mReportsAdapter;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +113,7 @@ public class ReportsActivity extends AppCompatActivity implements
     private void setRecyclerViewEndlessScroller() {
         mRecyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(mLayoutManager) {
             @Override
-            public void onLoadMore(int current_page) {
+            public void onLoadMore(int currentPage) {
                 mSwipeRefreshLayout.setRefreshing(true);
                 ReportsRetriever.getInstance().retrieveMoreReports();
             }
@@ -127,7 +127,7 @@ public class ReportsActivity extends AppCompatActivity implements
     @Override
     public void onClick(int position) {
         Intent intent = new Intent(this, MapActivity.class);
-        intent.putExtra(MapActivity.CRIME_POSITION,position);
+        intent.putExtra(MapActivity.CRIME_POSITION, position);
         intent.putExtra(MapActivity.MAP_FLAG, true);
         startActivity(intent);
     }

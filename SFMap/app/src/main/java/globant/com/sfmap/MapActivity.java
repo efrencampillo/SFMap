@@ -23,10 +23,10 @@ public class MapActivity extends AppCompatActivity implements
         OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private boolean showingCrimePin = false;
+    private boolean mShowingCrimePin = false;
     private Toolbar mToolbar;
 
-    public static final String MAP_FLAG = "showingCrimePin";
+    public static final String MAP_FLAG = "mShowingCrimePin";
     public static final String CRIME_POSITION = "mID";
 
     @Override
@@ -37,7 +37,7 @@ public class MapActivity extends AppCompatActivity implements
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        showingCrimePin = getIntent().getBooleanExtra(MAP_FLAG, false);
+        mShowingCrimePin = getIntent().getBooleanExtra(MAP_FLAG, false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -62,7 +62,7 @@ public class MapActivity extends AppCompatActivity implements
             addIcon(factory, district.mName + "\n" + district.reports, new LatLng(district.mLat, district.mLon));
         }
 
-        if (showingCrimePin) {
+        if (mShowingCrimePin) {
             try {
                 Report report = ReportsRetriever.getInstance().get(getIntent().getIntExtra(CRIME_POSITION, 0));
                 double lat = Double.parseDouble(report.mLat);

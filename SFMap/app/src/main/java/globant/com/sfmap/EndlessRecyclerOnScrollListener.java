@@ -9,12 +9,12 @@ import android.support.v7.widget.RecyclerView;
 
 public abstract class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListener {
 
-    private int previousTotal = 0; // The total number of items in the dataset after the last load
-    private boolean loading = true; // True if we are still waiting for the last set of data to load.
-    private int visibleThreshold = 5; // The minimum amount of items to have below your current scroll position before loading more.
-    private int firstVisibleItem, visibleItemCount, totalItemCount;
+    private int mPreviousTotal = 0; // The total number of items in the dataset after the last load
+    private boolean mIsLoading = true; // True if we are still waiting for the last set of data to load.
+    private int mVisibleThreshold = 5; // The minimum amount of items to have below your current scroll position before mIsLoading more.
+    private int mFirstVisibleItem, mVisibleItemCount, mTotalItemCount;
 
-    private int current_page = 1;
+    private int mCurrentPage = 1;
 
     private LinearLayoutManager mLinearLayoutManager;
 
@@ -26,27 +26,27 @@ public abstract class EndlessRecyclerOnScrollListener extends RecyclerView.OnScr
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
 
-        visibleItemCount = recyclerView.getChildCount();
-        totalItemCount = mLinearLayoutManager.getItemCount();
-        firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
+        mVisibleItemCount = recyclerView.getChildCount();
+        mTotalItemCount = mLinearLayoutManager.getItemCount();
+        mFirstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
 
-        if (loading) {
-            if (totalItemCount > previousTotal) {
-                loading = false;
-                previousTotal = totalItemCount;
+        if (mIsLoading) {
+            if (mTotalItemCount > mPreviousTotal) {
+                mIsLoading = false;
+                mPreviousTotal = mTotalItemCount;
             }
         }
-        if (!loading && (totalItemCount - visibleItemCount)
-                <= (firstVisibleItem + visibleThreshold)) {
+        if (!mIsLoading && (mTotalItemCount - mVisibleItemCount)
+                <= (mFirstVisibleItem + mVisibleThreshold)) {
             // End has been reached
-            current_page++;
+            mCurrentPage++;
 
-            onLoadMore(current_page);
+            onLoadMore(mCurrentPage);
 
-            loading = true;
+            mIsLoading = true;
         }
     }
 
-    public abstract void onLoadMore(int current_page);
+    public abstract void onLoadMore(int currentPage);
 
 }
